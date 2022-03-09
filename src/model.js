@@ -1,4 +1,5 @@
 const Sequelize = require('sequelize');
+const { Op } = Sequelize
 
 const sequelize = new Sequelize({
   dialect: 'sqlite',
@@ -50,6 +51,9 @@ Contract.init(
         const where = profile.type === 'client' ? {ClientId: profile.id} : {ContractorId: profile.id}
         return {where}
       },
+      byStatuses(statuses) {
+        return {where: {status: {[Op.in]: statuses}}}
+      }
     },
     sequelize,
     modelName: 'Contract'
