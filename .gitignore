@@ -1,0 +1,29 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Dependency directories
+node_modules/
+
+# dotenv environment variables file
+.env
+
+# coverage report
+coverage/
+
+#OS
+.DS_Store
+
+# NYC output
+.nyc_output
+
+## VS Code debugging stuff
+.vscode/
+jsconfig.json
+
+## Webstorm files
+.idea/
+
+# Temp files
+.tmp/
