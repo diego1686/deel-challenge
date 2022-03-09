@@ -80,6 +80,11 @@ Job.init(
     }
   },
   {
+    scopes: {
+      unpaid: {
+        where: {paid: {[Op.not]: true}}
+      }
+    },
     sequelize,
     modelName: 'Job'
   }
