@@ -45,6 +45,12 @@ Contract.init(
     }
   },
   {
+    scopes: {
+      byProfile(profile) {
+        const where = profile.type === 'client' ? {ClientId: profile.id} : {ContractorId: profile.id}
+        return {where}
+      },
+    },
     sequelize,
     modelName: 'Contract'
   }
