@@ -27,3 +27,4 @@ jsconfig.json
 
 # Temp files
 .tmp/
+database.sqlite3
