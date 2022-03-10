@@ -1,18 +1,30 @@
 # DEEL BACKEND TASK
 
-  
+
 
 💫 Welcome! 🎉
 
 
 This backend exercise involves building a Node.js/Express.js app that will serve a REST API. We imagine you should spend around 3 hours at implement this feature.
 
+## How to run the tests
+
+```sh
+$ npm test
+```
+
+## How to get the test coverage
+
+```sh
+$ npm run coverage
+```
+
 ## Data Models
 
 > **All models are defined in src/model.js**
 
 ### Profile
-A profile can be either a `client` or a `contractor`. 
+A profile can be either a `client` or a `contractor`.
 clients create contracts with contractors. contractor does jobs for clients and get paid.
 Each profile has a balance property.
 
@@ -26,35 +38,35 @@ contractor get paid for jobs by clients under a certain contract.
 
 ## Getting Set Up
 
-  
+
 The exercise requires [Node.js](https://nodejs.org/en/) to be installed. We recommend using the LTS version.
 
-  
+
 
 1. Start by cloning this repository.
 
-  
+
 
 1. In the repo root directory, run `npm install` to gather all dependencies.
 
-  
+
 
 1. Next, `npm run seed` will seed the local SQLite database. **Warning: This will drop the database if it exists**. The database lives in a local file `database.sqlite3`.
 
-  
+
 
 1. Then run `npm start` which should start both the server and the React client.
 
-  
+
 
 ❗️ **Make sure you commit all changes to the master branch!**
 
-  
-  
+
+
 
 ## Technical Notes
 
-  
+
 
 - The server is running with [nodemon](https://nodemon.io/) which will automatically restart for you when you modify and save a file.
 
@@ -63,15 +75,15 @@ The exercise requires [Node.js](https://nodejs.org/en/) to be installed. We reco
 - To authenticate users use the `getProfile` middleware that is located under src/middleware/getProfile.js. users are authenticated by passing `profile_id` in the request header. after a user is authenticated his profile will be available under `req.profile`. make sure only users that are on the contract can access their contracts.
 - The server is running on port 3001.
 
-  
 
-## APIs To Implement 
 
-  
+## APIs To Implement
+
+
 
 Below is a list of the required API's for the application.
 
-  
+
 
 
 1. ***GET*** `/contracts/:id` - This API is broken 😵! it should return the contract only if it belongs to the profile calling. better fix that!
@@ -107,7 +119,7 @@ Below is a list of the required API's for the application.
 ]
 ```
 
-  
+
 
 ## Going Above and Beyond the Requirements
 
@@ -115,12 +127,12 @@ Given the time expectations of this exercise, we don't expect anyone to submit a
 
 It would be great for example if you'd write some unit test / simple frontend demostrating calls to your fresh APIs.
 
-  
+
 
 ## Submitting the Assignment
 
 When you have finished the assignment, create a github repository and send us the link.
 
-  
+
 
 Thank you and good luck! 🙏
