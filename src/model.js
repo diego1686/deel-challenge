@@ -60,7 +60,39 @@ Contract.init(
   }
 );
 
-class Job extends Sequelize.Model {}
+class Job extends Sequelize.Model {
+  /**
+   * @description Pays the current job
+   *
+   * @param {Object} params - Payment parameters.
+   * @param {string} params.clientId - The Id of the client making the payment
+   * @param {string} params.contractorId - The Id of the contractor getting paid
+   *
+   * @returns {Promise<Object>} A promise that will be resolved with no value
+   * if the job was paid successfully. In any other case, the promise will
+   * be rejected with the appropriate error.
+   */
+  async pay({ clientId, contractorId }) {
+    const job = this
+
+    await sequelize.transaction(async (transaction) => {
+        await Profile.increment({balance: -job.price}, {
+            where: {id: clientId},
+            transaction
+        })
+
+        await Profile.increment({balance: job.price}, {
+            where: {id: contractorId},
+            transaction
+        })
+
+        await Job.update({paid: true, paymentDate: Date.now()}, {
+            where: {id: job.id},
+            transaction
+        })
+    })
+  }
+}
 Job.init(
   {
     description: {

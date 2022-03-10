@@ -6,4 +6,20 @@ const getProfile = async (req, res, next) => {
     req.profile = profile
     next()
 }
-module.exports = {getProfile}
+
+/**
+ * @description Checks the type of the current profile. If the type is not valid,
+ * a 401 error is returned to the client.
+ *
+ * @param {string} type - The allowed profile type.
+ *
+ */
+const checkProfileType = type => (req, res, next) => {
+    if (req.profile.type !== type) return res.status(401).end()
+    next()
+}
+
+module.exports = {
+    getProfile,
+    checkProfileType
+}

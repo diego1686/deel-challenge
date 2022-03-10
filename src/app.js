@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const {sequelize} = require('./model')
-const {getProfile} = require('./middleware/getProfile')
+const {getProfile, checkProfileType} = require('./middleware/getProfile')
 const app = express();
 app.use(bodyParser.json());
 app.set('sequelize', sequelize)
@@ -10,7 +10,7 @@ app.set('models', sequelize.models)
 /**
  * @returns contract by id
  */
-app.get('/contracts/:id',getProfile ,async (req, res) =>{
+app.get('/contracts/:id', getProfile, async (req, res) =>{
     const {Contract} = req.app.get('models')
     const {id} = req.params
     const contract = await Contract.scope({method: ['byProfile', req.profile]}).findOne({where: {id}})
@@ -46,14 +46,13 @@ app.get('/jobs/unpaid', getProfile, async (req, res) =>{
 /**
  * @returns
  */
- app.post('/jobs/:job_id/pay', getProfile, async (req, res) =>{
-    const {Job, Contract, Profile} = req.app.get('models')
+ app.post('/jobs/:job_id/pay', getProfile, checkProfileType('client'), async (req, res) =>{
+    const {Job, Contract} = req.app.get('models')
     const {profile, params: {job_id}} = req
     const job = await Job.scope('unpaid').findOne({
         where: {id: job_id},
         include: [{
-            model: Contract,
-            where: {ClientId: profile.id}
+            model: Contract.scope({method: ['byProfile', req.profile]})
         }]
     })
     if(!job) return res.status(404).end()
@@ -61,24 +60,7 @@ app.get('/jobs/unpaid', getProfile, async (req, res) =>{
 
     try {
         const {Contract: contract} = job
-
-        await sequelize.transaction(async (transaction) => {
-            await Profile.increment({balance: -job.price}, {
-                where: {id: contract.ClientId},
-                transaction
-            })
-
-            await Profile.increment({balance: job.price}, {
-                where: {id: contract.ContractorId},
-                transaction
-            })
-
-            await Job.update({paid: true, paymentDate: Date.now()}, {
-                where: {id: job.id},
-                transaction
-            })
-        })
-
+        await job.pay({ clientId: contract.ClientId, contractorId: contract.ContractorId })
         res.status(200).end()
     } catch (error) {
         console.log('Job cannot be paid', error.message) // todo: improve this with express
