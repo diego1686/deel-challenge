@@ -6,7 +6,34 @@ const sequelize = new Sequelize({
   storage: './database.sqlite3'
 });
 
-class Profile extends Sequelize.Model {}
+class Profile extends Sequelize.Model {
+  /**
+   * @description Makes a deposit to a given user
+   *
+   * @param {Object} params - Deposit parameters.
+   * @param {string} params.userId - The Id of the desintation user
+   * @param {number} params.amount - The amount to be deposited
+   *
+   * @returns {Promise<undefined>} A promise that will be resolved with no value
+   * if the deposit was made successfully. In any other case, the promise will
+   * be rejected with the appropriate error.
+   */
+  async deposit({ userId, amount }) {
+    const profile = this
+
+    await sequelize.transaction(async (transaction) => {
+        await Profile.increment({balance: -amount}, {
+            where: {id: profile.id},
+            transaction
+        })
+
+        await Profile.increment({balance: amount}, {
+            where: {id: userId},
+            transaction
+        })
+    })
+  }
+}
 Profile.init(
   {
     firstName: {
@@ -68,7 +95,7 @@ class Job extends Sequelize.Model {
    * @param {string} params.clientId - The Id of the client making the payment
    * @param {string} params.contractorId - The Id of the contractor getting paid
    *
-   * @returns {Promise<Object>} A promise that will be resolved with no value
+   * @returns {Promise<undefined>} A promise that will be resolved with no value
    * if the job was paid successfully. In any other case, the promise will
    * be rejected with the appropriate error.
    */
@@ -115,6 +142,9 @@ Job.init(
     scopes: {
       unpaid: {
         where: {paid: {[Op.not]: true}}
+      },
+      paid: {
+        where: {paid: true}
       }
     },
     sequelize,
