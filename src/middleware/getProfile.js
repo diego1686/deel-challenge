@@ -9,13 +9,13 @@ const getProfile = async (req, res, next) => {
 
 /**
  * @description Checks the type of the current profile. If the type is not valid,
- * a 401 error is returned to the client.
+ * a 403 error is returned to the client.
  *
  * @param {string} type - The allowed profile type.
  *
  */
 const checkProfileType = type => (req, res, next) => {
-    if (req.profile.type !== type) return res.status(401).end()
+    if (req.profile.type !== type) return res.status(403).end()
     next()
 }
 

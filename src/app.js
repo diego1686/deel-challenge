@@ -39,8 +39,8 @@ app.get('/jobs/unpaid', getProfile, async (req, res) =>{
     const {Job, Contract} = req.app.get('models')
     const jobs = await Job.scope('unpaid').findAll({
         include: [{
-            model: Contract
-                .scope({method: ['byProfile', req.profile]}, {method: ['byStatuses', ['in_progress']]})
+            model: Contract.scope({method: ['byProfile', req.profile]}, {method: ['byStatuses', ['in_progress']]}),
+            attributes: []
         }]
     })
     res.json(jobs)
@@ -66,7 +66,7 @@ app.post('/jobs/:job_id/pay', getProfile, checkProfileType('client'), async (req
         await job.pay({ clientId: contract.ClientId, contractorId: contract.ContractorId })
         res.status(200).end()
     } catch (error) {
-        console.log('Job cannot be paid', error.message)
+        console.log('Job cannot be paid:', error.message)
         res.status(500).end()
     }
 })
@@ -107,7 +107,7 @@ app.post('/balances/deposit/:userId', getProfile, checkProfileType('client'), ce
             await profile.deposit({ userId, amount })
             res.status(200).end()
         } catch (error) {
-            console.log('Error making deposit', error.message)
+            console.log('Error making deposit:', error.message)
             res.status(500).end()
         }
     }
@@ -119,7 +119,7 @@ app.post('/balances/deposit/:userId', getProfile, checkProfileType('client'), ce
 app.get('/admin/best-profession', getProfile, celebrate({
         [Segments.QUERY]: Joi.object().keys({
             start: Joi.date().iso().optional(),
-            end: Joi.date().iso().optional()
+            end: Joi.date().iso().optional(),
         })
     }),
     async (req, res) =>{

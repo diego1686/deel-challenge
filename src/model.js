@@ -3,7 +3,8 @@ const { Op } = Sequelize
 
 const sequelize = new Sequelize({
   dialect: 'sqlite',
-  storage: './database.sqlite3'
+  storage: process.env.NODE_ENV === 'test'? './test.sqlite3' : './database.sqlite3',
+  logging: process.env.NODE_ENV !== 'test'
 });
 
 class Profile extends Sequelize.Model {

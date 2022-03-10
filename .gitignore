@@ -28,3 +28,4 @@ jsconfig.json
 # Temp files
 .tmp/
 database.sqlite3
+test.sqlite3
